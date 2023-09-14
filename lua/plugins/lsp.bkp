@@ -1,0 +1,161 @@
+return {
+  -- LSP Configuration & Plugins
+  'neovim/nvim-lspconfig',
+  dependencies = {
+    -- Automatically install LSPs to stdpath for neovim
+    { 'williamboman/mason.nvim', config = true },
+    'williamboman/mason-lspconfig.nvim',
+    'hrsh7th/cmp-nvim-lsp',
+
+    -- Useful status updates for LSP
+    -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+    { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+
+    -- Additional lua configuration, makes nvim stuff amazing!
+    'folke/neodev.nvim',
+
+    -- show signature while typing
+    {
+      'ray-x/lsp_signature.nvim',
+      event = 'VeryLazy',
+      opts = {
+        select_signature_key = '<M-n>',
+        toggle_key = '<M-x>',
+        toggle_key_flip_floatwin_setting = true,
+        floating_window = true,
+        floating_window_above_cur_line = true,
+        floating_window_off_x = 0,
+        handler_opts = {
+          border = 'none', -- double, rounded, single, shadow, none
+        },
+        doc_lines = 0,
+        hint_enable = false,
+        hint_prefix = ' ',
+      },
+      config = function(_, opts)
+        require('lsp_signature').setup(opts)
+      end,
+    },
+  },
+  config = function()
+    --  This function gets run when an LSP connects to a particular buffer.
+    local on_attach = function(_, bufnr)
+      -- NOTE: Remember that lua is a real programming language, and as such it is possible
+      -- to define small helper and utility functions so you don't have to repeat yourself
+      -- many times.
+      --
+      -- In this case, we create a function that lets us more easily define mappings specific
+      -- for LSP related items. It sets the mode, buffer and description for us each time.
+      local nmap = function(keys, func, desc)
+        if desc then
+          desc = 'LSP: ' .. desc
+        end
+
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+      end
+
+      -- See `:help K` for why this keymap
+      nmap('gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', 'Declaration')
+      nmap('gd', '<cmd>lua vim.lsp.buf.definition()<CR>', 'Definition')
+      nmap('K', '<cmd>lua vim.lsp.buf.hover()<CR>', 'Hover')
+      nmap('gI', '<cmd>lua vim.lsp.buf.implementation()<CR>', 'Implementation')
+      nmap('gr', '<cmd>lua vim.lsp.buf.references()<CR>', 'References')
+      nmap('gl', '<cmd>lua vim.diagnostic.open_float()<CR>', 'Line diagnostic')
+      nmap('<M-j>', '<cmd>lua vim.diagnostic.goto_next()<cr>', 'Next diagnostic')
+      nmap('<M-k>', '<cmd>lua vim.diagnostic.goto_next()<cr>', 'Previous diagnostic')
+
+      -- Create a command `:Format` local to the LSP buffer
+      vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
+        vim.lsp.buf.format()
+      end, { desc = 'Format current buffer with LSP' })
+
+      local cfg = require('lsp_signature').config
+      require('lsp_signature').on_attach(cfg, bufnr)
+    end
+
+    -- Enable the following language servers
+    --  Add any additional override configuration in the following tables. They will be passed to
+    --  the `settings` field of the server config
+    local servers = {
+      lua_ls = {
+        Lua = {
+          workspace = { checkThirdParty = false },
+          telemetry = { enable = false },
+        },
+      },
+      pylsp = {
+        plugins = {
+          jedi = {
+            extra_paths = {
+              '/opt/miniconda/lib/python3.8/site-packages',
+              '/home/vmi/.local/lib/python3.10/site-packages',
+            },
+          },
+          -- jedi_completion = {
+          --   enabled = true,
+          --   include_class_objects = true,
+          --   include_function_objects = true,
+          -- },
+          -- autopep8 = { enabled = false },
+          -- mccabe = { enabled = false },
+          -- pycodestyle = { enabled = false },
+          -- pydocstyle = { enabled = false },
+          -- yapf = { enabled = false },
+        },
+      },
+    }
+
+    -- Setup neovim lua configuration
+    require('neodev').setup()
+
+    -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+    -- Ensure the servers above are installed
+    local mason_lspconfig = require 'mason-lspconfig'
+
+    mason_lspconfig.setup {
+      ensure_installed = vim.tbl_keys(servers),
+    }
+
+    mason_lspconfig.setup_handlers {
+      function(server_name)
+        require('lspconfig')[server_name].setup {
+          capabilities = capabilities,
+          on_attach = on_attach,
+          settings = servers[server_name],
+          filetypes = (servers[server_name] or {}).filetypes,
+        }
+      end,
+    }
+
+    local signs = {
+      { name = 'DiagnosticSignError', text = '' },
+      { name = 'DiagnosticSignWarn', text = '' },
+      { name = 'DiagnosticSignHint', text = '' },
+      { name = 'DiagnosticSignInfo', text = '' },
+    }
+
+    for _, sign in ipairs(signs) do
+      vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = '' })
+    end
+
+    vim.diagnostic.config {
+      virtual_text = false,
+      signs = {
+        active = signs,
+      },
+      underline = false,
+      severity_sort = true,
+      float = {
+        focusable = false,
+        style = 'minimal',
+        border = 'rounded',
+        source = 'always',
+        header = '',
+        prefix = '',
+      },
+    }
+  end,
+}
