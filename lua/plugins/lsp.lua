@@ -77,6 +77,7 @@ function M.config()
   local servers = {
     lua_ls = {
       Lua = {
+        workspace = { checkThirdParty = false },
         telemetry = { enable = false },
         completion = { callSnippet = "Replace" },
       },

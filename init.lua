@@ -10,6 +10,11 @@ lua help:
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- disable netrw at the very start of your init.lua
+-- (recommended when using nvim-tree)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -37,13 +42,13 @@ require('lazy').setup({
   'farmergreg/vim-lastplace',
 
   -- better python folding
-  {
-    'tmhedberg/SimpylFold',
-    ft = 'python',
-    dependencies = {
-      'Konfekt/FastFold',
-    },
-  },
+  -- {
+  --   'tmhedberg/SimpylFold',
+  --   ft = 'python',
+  --   dependencies = {
+  --     'Konfekt/FastFold',
+  --   },
+  -- },
 
   -- Add indentation guides even on blank lines
   {
@@ -67,10 +72,6 @@ require('lazy').setup({
   { import = 'plugins' },
 }, {})
 
--- [[ Setting options ]]
 require 'options'
-
--- [[ Basic Keymaps ]]
 require 'keymaps'
-
 require 'autocommands'
