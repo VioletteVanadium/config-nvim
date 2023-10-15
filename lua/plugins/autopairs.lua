@@ -24,15 +24,17 @@ function M.config()
 		fast_wrap = {
 			map = "<M-e>",
 			chars = { "{", "[", "(", '"', "'" },
+			pattern = [=[[%'%"%>%]%)%}%,]]=],
 			-- pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
 			-- offset = 0, -- Offset from pattern match
-			pattern = [=[[%'%"%>%]%)%}%,]]=],
-      manual_position = false,
 			end_key = "$",
+      cursor_pos_before = false,
 			keys = "qwertyuiopzxcvbnmasdfghjkl",
+			-- highlight = "PmenuSel",
+			-- highlight_grey = "LineNr",
+      manual_position = false,
+      use_virt_lines = true,
 			check_comma = true,
-			highlight = "PmenuSel",
-			highlight_grey = "LineNr",
 		},
 	})
 
@@ -96,7 +98,7 @@ function M.config()
 	-- fastwrap puts the cursor after the inserted thingy
 	local fastwrap = require("nvim-autopairs.fastwrap")
 	local move_bracket = fastwrap.move_bracket
-	---@diagnostic disable-next-line: duplicate-set-field
+	--- @diagnostic disable-next-line: duplicate-set-field
 	fastwrap.move_bracket = function(line, pos, pair, _)
 		move_bracket(line, pos, pair, true)
 	end

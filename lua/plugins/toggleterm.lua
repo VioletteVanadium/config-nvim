@@ -13,7 +13,7 @@ function M.config()
 		float_opts = {
 			border = "curved",
 		},
-		open_mapping = [[<c-\>]],
+		open_mapping = "<c-t>",
     persist_mode = false,
 	})
 

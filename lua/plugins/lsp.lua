@@ -74,6 +74,13 @@ function M.config()
     end
   end
 
+  local venv_path = os.getenv("VIRTUAL_ENV")
+  local pyexe = nil
+  if venv_path ~= nil then
+    pyexe = venv_path .. "/bin/python3"
+  else
+    pyexe = vim.g.python3_host_prog
+  end
   local servers = {
     lua_ls = {
       Lua = {
@@ -83,19 +90,29 @@ function M.config()
       },
     },
     pylsp = {
-      plugins = {
-        jedi = {
-          extra_paths = {
-            '/opt/miniconda/lib/python3.8/site-packages',
-            '/home/vmi/.local/lib/python3.10/site-packages',
+      pylsp = {
+        plugins = {
+          pylsp_mypy = {
+            overrides = {"--python-executable", pyexe, true},
           },
-        },
-        autopep8 = { enabled = false },
-        mccabe = { enabled = false },
-        pycodestyle = { enabled = false },
-        pydocstyle = { enabled = false },
-        yapf = { enabled = false },
+          pycodestyle = {
+            ignore = {"E501", "W503"},
+          },
+          black = {
+            line_length = 80,
+          },
+        }
       },
+    },
+    gopls = {
+      gopls = {
+        ["ui.completion.usePlaceholders"] = true 
+      },
+    },
+    gdscript = {
+      gdscript = {
+        -- tcp = '127.0.0.1:6005'
+      }
     },
   }
 

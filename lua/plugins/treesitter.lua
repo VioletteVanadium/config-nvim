@@ -26,7 +26,7 @@ return {
 			auto_install = true,
 
 			highlight = { enable = true },
-			indent = { enable = true },
+			indent = { enable = true, disable = { "gdscript", "yaml" } },
 			incremental_selection = {
 				enable = true,
 				keymaps = {
@@ -36,7 +36,6 @@ return {
 					node_decremental = "<M-space>",
 				},
 			},
-
 			textobjects = {
 				select = {
 					enable = true,
@@ -85,5 +84,34 @@ return {
 
 		vim.wo.foldmethod = "expr"
 		vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+    -- vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+
+		local folds_queries = {
+			go = [[
+        [
+          (function_declaration)
+          (import_declaration)
+          (method_declaration)
+        ] @fold
+      ]],
+			python = [[
+        [
+          (function_definition)
+          (class_definition)
+          (import_from_statement)
+          (string)
+        ] @fold
+      ]],
+			lua = [[
+        [
+         (function_declaration)
+         (function_definition)
+        ] @fold
+      ]],
+		}
+		local query_setter = require("vim.treesitter.query")
+		for lang, query in pairs(folds_queries) do
+			query_setter.set(lang, "folds", query)
+		end
 	end,
 }

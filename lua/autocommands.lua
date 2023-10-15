@@ -43,6 +43,13 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
   end,
 })
 
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = { "*.sh", "*.bash", "*.zsh" },
+  callback = function()
+    vim.cmd("set filetype=sh")
+  end,
+})
+
 -- vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 --   callback = function()
 --     local line_count = vim.api.nvim_buf_line_count(0)
