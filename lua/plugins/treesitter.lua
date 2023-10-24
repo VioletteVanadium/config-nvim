@@ -3,6 +3,13 @@ return {
 	"nvim-treesitter/nvim-treesitter",
 	dependencies = {
 		"nvim-treesitter/nvim-treesitter-textobjects",
+		-- for indenting only
+		{
+			"sheerun/vim-polyglot",
+			config = function ()
+				vim.g.polyglot_disable = {"sensible"}
+			end
+		},
 	},
 	build = ":TSUpdate",
 	config = function()
