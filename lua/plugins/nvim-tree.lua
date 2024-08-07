@@ -49,7 +49,7 @@ function M.config()
 		},
 		update_focused_file = {
 			enable = true,
-			update_root = true,
+			-- update_root = true,
 		},
 		git = {
 			enable = false,
@@ -82,7 +82,7 @@ local function open_nvim_tree(data)
 	end
 
 	-- change to the directory
-	-- vim.cmd.cd(data.file)
+	vim.cmd.cd(data.file)
 
 	-- open the tree
 	require("nvim-tree.api").tree.open()

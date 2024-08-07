@@ -1,3 +1,4 @@
+vim.opt.compatible = false
 -- creates a backup file
 vim.opt.backup = true
 -- enable persistent undo

@@ -41,29 +41,30 @@ require("lazy").setup({
 	-- remember cursor position
 	"farmergreg/vim-lastplace",
 
-	-- better python folding
-	-- {
-	--   'tmhedberg/SimpylFold',
-	--   ft = 'python',
-	--   dependencies = {
-	--     'Konfekt/FastFold',
-	--   },
-	-- },
+  -- better python folding
+  {
+    'tmhedberg/SimpylFold',
+    ft = 'python',
+    dependencies = {
+      'Konfekt/FastFold',
+    },
+  },
 
-	-- Add indentation guides even on blank lines
-	{
-		"lukas-reineke/indent-blankline.nvim",
+  -- Add indentation guides even on blank lines
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    -- See `:help indent_blankline.txt`
     main = "ibl",
-		opts = {
+    opts = {
       indent = {
-        char = "┊",
+        char = '┊',
       },
       scope = {
         show_start = false,
         show_end = false,
-      }
-		},
-	},
+      },
+    },
+  },
 
 	-- "gc" to comment visual regions/lines
 	{ "numToStr/Comment.nvim", opts = {} },
