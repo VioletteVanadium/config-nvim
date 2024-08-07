@@ -67,7 +67,7 @@ function M.config()
   local on_attach = function(client, bufnr)
     lsp_keymaps(bufnr)
     if client.server_capabilities.inlayHintProvider then
-      vim.lsp.inlay_hint(bufnr, true)
+      vim.lsp.inlay_hint.enable(true, {bufnr=bufnr})
     else
       local cfg = require('lsp_signature').config
       require('lsp_signature').on_attach(cfg, bufnr)
